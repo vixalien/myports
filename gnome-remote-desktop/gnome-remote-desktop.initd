@@ -2,7 +2,16 @@
 
 supervisor="supervise-daemon"
 
-description="GNOME Remote Desktop"
-command="/usr/libexec/gnome-remote-desktop"
-command_args="--system"
+name="GNOME Remote Desktop"
+description="GNOME Remote Desktop Service"
+
+command="/usr/libexec/gnome-remote-desktop-daemon"
+#command_args="--system"
+command_user="gnome-remote-desktop"
+
+depend() {
+    need dbus
+    after display-manager
+    want net
+}
 
