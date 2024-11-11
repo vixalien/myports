@@ -1,0 +1,36 @@
+# Contributor:
+# Maintainer:
+pkgname=elementary-onboarding
+pkgver=8.0.2
+pkgrel=0
+pkgdesc="Onboarding app for new users"
+url="https://github.com/elementary/onboarding"
+arch="all"
+license="GPL-3.0-or-later"
+makedepends="
+	granite7-dev
+	gtk4.0-dev
+	meson
+	vala
+	"
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::https://github.com/elementary/onboarding/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/onboarding-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+9659ed7c628941e22102b6cfe60feffeb41e888390cb5fb78e38cb864186dd48f650ba8322948e0f589349a72bd9a034552465d3b1883d08c28b056d58c3b3d9  elementary-onboarding-8.0.2.tar.gz
+"

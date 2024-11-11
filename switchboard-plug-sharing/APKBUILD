@@ -1,0 +1,41 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-sharing
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Switchboard Sharing Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="switchboard"
+makedepends="
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	meson
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+00fb204d636888705623e52c848c824a4221c9e1920a1657c36e618026114413b47cb0c286a37f30d7a999172c1b0eda23bd925278e48133010fb59993bd0a21  switchboard-plug-sharing-8.0.0.tar.gz
+"

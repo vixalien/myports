@@ -1,0 +1,20 @@
+# Contributor:
+# Maintainer:
+pkgname=s6-linux-init-mkinitfs
+pkgver=1.0
+pkgrel=2
+pkgdesc="Include s6-linux-init in mkinitfs"
+url="https://nolink"
+license="MIT"
+arch="noarch"
+depends="s6-linux-init mkinitfs"
+source="s6-linux-init.files"
+options="!check"
+
+package() {
+	install -Dm644 "$srcdir/s6-linux-init.files" "$pkgdir/etc/mkinitfs/features.d/s6-linux-init.files"
+}
+
+sha512sums="
+4566109513fbdcb3ad2901f49e652de1f9bc87c3d48be1e5a12463371fab1104d0635bcd849b9e358598c1abfe6b0c90f5f371f2682f9ea14852fbd520d09f83  s6-linux-init.files
+"

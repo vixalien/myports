@@ -1,0 +1,43 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-sound
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Switchboard Sound Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="switchboard"
+makedepends="
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	libcanberra-dev
+	meson
+	pulseaudio-dev
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+4ce8ce43229eae7c50fae7a6212b5f0e48a36a8b4d9c8a96ff4874edd548f8131f3143fbebc513a8c265703cac854866e458d40eff4e3a6f8920137d8b7be804  switchboard-plug-sound-8.0.0.tar.gz
+"

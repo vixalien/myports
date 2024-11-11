@@ -1,0 +1,38 @@
+# Contributor:
+# Maintainer:
+pkgname=nss-mdns
+pkgver=0.15.1
+pkgrel=1
+pkgdesc="nss plugin providing host name resolution via mDNS"
+url=""https://github.com/avahi/nss-mdns
+arch="all"
+license="LGPL"
+depends="avahi musl-nscd"
+makedepends="musl-nscd-dev"
+install=""
+subpackages=""
+source="$pkgname-$pkgver.tar.gz::$url/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz"
+options="!check"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+prepare() {
+	# musl doesn't provide most nss.h functionality, same as BSD
+	find ./src -type f -exec sed -i -e 's/__FreeBSD__/__linux__/' {} \;
+}
+
+build() {
+	./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var
+	make
+}
+
+package() {
+	make DESTDIR="$pkgdir" install
+}
+
+sha512sums="
+11a82ae9f209326b4501c7e6d33c9932b370c4dcacb64d6783140e25688ad6391bbd113e51ee470fd8be12669124eac331593cfd02a040383b4f964ed6ec6154  nss-mdns-0.15.1.tar.gz
+"

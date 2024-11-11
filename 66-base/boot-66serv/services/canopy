@@ -1,0 +1,18 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Launch every services of the system"
+@user = ( root )
+@depends = (
+  mount-branch system-branch local-branch runtime-branch
+)
+
+[start]
+@execute = (
+  %YELL_INFO% canopy completed
+)
+
+[stop]
+@execute = (
+  %YELL_ERROR% canopy completed
+)

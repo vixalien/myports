@@ -1,0 +1,33 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount /dev/pts directory"
+@user = ( root )
+@depends = ( mount-dev )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-dev mount /dev/pts directory }
+  if -nt {
+
+    execl-cmdline -s { execl-toc -X -m /dev/pts ${Args} }
+
+  }
+  %YELL_ERROR% mount-dev crashed!
+)
+
+[stop]
+@execute=
+(
+  if { %YELL_INFO% mount-pts stops... }
+  if -nt {
+
+    execl-toc -tD -m /dev/pts umount -lR /dev/pts
+
+  }
+  %YELL_ERROR% mount-pts crashed!
+)
+
+[environment]
+Args=!-o mode=0620,gid=5,nosuid,noexec -t devpts -d devpts

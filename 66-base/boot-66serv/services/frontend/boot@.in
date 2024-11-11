@@ -1,0 +1,9 @@
+[main]
+@type = module
+@version = @VERSION@
+@description = "Set of services to boot a machine"
+@intree = ( boot )
+@user = ( root )
+
+[environment]
+HostName

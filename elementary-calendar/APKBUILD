@@ -1,0 +1,57 @@
+# Contributor: Angelo Verlain <hey@vixalien.com>
+maintainer="Angelo Verlain <hey@vixalien.com>"
+_pkgname=calendar
+pkgname=elementary-$_pkgname
+pkgver=8.0.0
+pkgrel=1
+pkgdesc="Desktop calendar app designed for elementary OS"
+url="https://github.com/elementary/$_pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	folks-dev
+	geoclue-dev
+	geocode-glib-dev
+	granite-dev
+	gtk+3.0-dev
+	libchamplain-dev
+	libhandy1-dev
+	libportal-dev
+	cmd:locale
+	meson
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="
+	$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz
+	fix-glibc.patch
+	fix-null-terminated-array.patch
+	fix-time-type-mismatch.patch
+"
+
+builddir="$srcdir/$_pkgname-$pkgver"
+
+build() {
+	abuild-meson \
+		-Db_lto=true \
+		. output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+fdbc61d0612be2b17963f3ba7767c16668a3b4000cd69ede1ccd7ce5834371c68f83fffc5671c88ffccb8a3bbffe82a4a4ce1b354c1fa73af362ef0dfb4ec56e  elementary-calendar-8.0.0.tar.gz
+d233b500f906e3564e3e41cffcb748ade880773699ea786bee59c9fe9923ff1d8d9e82ffc6f619153b25b0b9545f459105cbad1b3ac04c70fbc3d6c5ad9cdc23  fix-glibc.patch
+894360abe02f597ba7ec5e29673112ddb5cab22a11d4d3c2404955ec6350df5a7b77b25d1d58ca31a86ffd4e4cf68597822d6ab7f48e47ab7e86ba205e52eebc  fix-null-terminated-array.patch
+a79193545b207514c75da269c597917ea353cfa04994f232ac41049cd04995ab5b7aa4d4acdc65870f16750c85056a35360944648253b7d2af1db7dbcb0f6407  fix-time-type-mismatch.patch
+"

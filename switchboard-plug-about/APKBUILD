@@ -1,0 +1,46 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-about
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Switchboard About Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="switchboard"
+makedepends="
+	fwupd-dev
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	libgtop-dev
+	libgudev-dev
+	meson
+	packagekit-dev
+	switchboard-dev
+	udisks2-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+5da39c767aeba8705e9e2d9e098284b357a465270eb679ec34f0b816dbde7e36c2f7cd87feeb9d0179f81250171dea00af612f5030df2c69dc8108f4117e7387  switchboard-plug-about-8.0.0.tar.gz
+"

@@ -1,0 +1,42 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-wacom
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Switchboard Wacom Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="switchboard"
+makedepends="
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	libwacom-dev
+	meson
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+1f6671d6f2eeacfa399b881d66656e8b15f4bfdf23cf4975126a9f1436cd0f09cdc685ec7ddb2572ae181d8c21fa32deef0d15c9d86bdeac90c109e9188a7b09  switchboard-plug-wacom-8.0.0.tar.gz
+"

@@ -1,0 +1,20 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount /dev directory"
+@user = ( root )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-dev mount /dev directory }
+  if -nt {
+
+    execl-cmdline -s { execl-toc -X -m /dev ${Args} }
+
+  }
+  %YELL_ERROR% mount-dev crashed!
+)
+
+[environment]
+Args=!-o mode=0755,nosuid -t devtmpfs -d dev

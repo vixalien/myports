@@ -1,0 +1,42 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-applications
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Switchboard Applications Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="switchboard"
+makedepends="
+	flatpak-dev
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	meson
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+1e7fc544d292f722027f0d03e2c7001d4981af2f3570b5064b9f228f9dce1ff8676389a348dd3d32c6bf49dfed747fe2ba50f8ab17f10a91bda1e41a97fe10d7  switchboard-plug-applications-8.0.0.tar.gz
+"

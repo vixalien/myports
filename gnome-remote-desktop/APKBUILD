@@ -1,0 +1,80 @@
+# Contributor: Rasmus Thomsen <oss@cogitri.dev>
+# Maintainer: team/gnome <pabloyoyoista@postmarketos.org>
+pkgname=gnome-remote-desktop
+pkgver=47.1
+pkgrel=3
+pkgdesc="GNOME Remote Desktop - remote desktop server"
+url="https://gitlab.gnome.org/GNOME/gnome-remote-desktop"
+arch="all !s390x" # blocked by pipewire
+license="GPL-2.0-or-later"
+# mesa and libgudev are checkdepends, but they don't get installed
+# due to options="!check"
+makedepends="
+	asciidoc
+	cairo-dev
+	fdk-aac-dev
+	ffnvcodec-headers
+	freerdp3-dev
+	fuse3-dev
+	glib-dev
+	libdrm-dev
+	libei-dev
+	libepoxy-dev
+	libgudev-dev
+	libnotify-dev
+	libsecret-dev
+	libvncserver-dev
+	libxkbcommon-dev
+	mesa-dev
+	meson
+	opus-dev
+	pipewire-dev
+	polkit-dev
+	tpm2-tss-dev
+	tpm2-tss-esys
+	tpm2-tss-mu
+	tpm2-tss-rc
+	tpm2-tss-tctildr
+	"
+checkdepends="
+	adwaita-icon-theme
+	bash
+	dbus
+	gnome-settings-daemon
+	mutter
+	py3-dbus
+	py3-gobject3
+	xvfb-run
+	"
+subpackages="$pkgname-doc $pkgname-lang $pkgname-openrc"
+options="!check" # Needs a full fat GNOME session
+install="gnome-remote-desktop.pre-install gnome-remote-desktop.pre-upgrade"
+source="
+	https://download.gnome.org/sources/gnome-remote-desktop/${pkgver%.*}/gnome-remote-desktop-$pkgver.tar.xz
+	gnome-remote-desktop.initd
+	"
+
+build() {
+	abuild-meson \
+		-Db_lto=true \
+		-Dsystemd=false \
+		-Dtests=false \
+		-Dvnc=true \
+		. output
+	meson compile -C output
+}
+
+check() {
+	mkdir -p /tmp/runtimedir
+	GSETTINGS_SCHEMA_DIR=output/src/ XDG_RUNTIME_DIR=/tmp/runtimedir meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+	install -Dm755 "$srcdir"/gnome-remote-desktop.initd "$pkgdir"/etc/init.d/gnome-remote-desktop
+}
+
+sha512sums="
+072d4064d23976eaf76a3293c313a6e121a33ab5ab5aa9557e6065579b72cfeae3e070db705c9d1d07dbb9fd5633ab5014aa1d4f022bc0b9a15ee2120589b75c  gnome-remote-desktop-47.1.tar.xz
+bff8f8b7f7a778f3799a51f2fd9ec12997a2cbcf5ff661cc3f816bd8a1944fcc866bf872e43a9e79b614328ee59d9726c77a726f608cfa9a4055676ea984b9bc  gnome-remote-desktop.initd
+"

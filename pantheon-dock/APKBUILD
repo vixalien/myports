@@ -1,0 +1,40 @@
+# Contributor:
+# Maintainer:
+_pkgname=dock
+pkgname=pantheon-$_pkgname
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="A quick app launcher and window switcher for Pantheon and elementary OS"
+url="https://github.com/elementary/$_pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	granite7-dev
+	libadwaita-dev
+	meson
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$_pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+bd1b331d9d9d4e6ee50ccee16deef728b39e8cfa979ad4e6a8fa57a3c94a09a9b1be013dec806696cb62aa4bec5d28a2d83193cf83bf543f1b15fcf0b3ec84ad  pantheon-dock-8.0.0.tar.gz
+"

@@ -1,0 +1,43 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Sets the local clock to UTC or Local Time."
+@user = ( root )
+@depends = ( mount-branch )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% hwclock set hardware clock }
+  if -nt {
+
+    execl-envfile ${ConfFile}
+    pipeline -d { echo ${HARDWARECLOCK} }
+    pipeline { tr A-Z a-z }
+    forstdin -- clock
+    importas -iu clock clock
+    hwclock --systz --${clock} --noadjfile
+
+  }
+  %YELL_ERROR% hwclock crashed!
+)
+
+[stop]
+@execute=
+(
+  if { %YELL_INFO% hwclock set hardware clock }
+  if -nt {
+
+    execl-envfile ${ConfFile}
+    pipeline -d { echo ${HARDWARECLOCK} }
+    pipeline { tr A-Z a-z }
+    forstdin -- clock
+    importas -iu clock clock
+    hwclock --systohc --${clock}
+
+  }
+  %YELL_ERROR% hwclock crashed!
+)
+
+[environment]
+ConfFile=!%BOOTCONF%

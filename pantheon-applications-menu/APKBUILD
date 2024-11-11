@@ -1,0 +1,46 @@
+# Contributor:
+# Maintainer:
+_pkgname=applications-menu
+pkgname=pantheon-$_pkgname
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Applications Menu for elementary OS and the Pantheon desktop environment"
+url="https://github.com/elementary/$_pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	granite-dev
+	gtk+3.0-dev
+	json-glib-dev
+	libhandy1-dev
+	libsoup-dev
+	meson
+	switchboard-dev
+	vala
+	wingpanel-dev
+	zeitgeist-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$_pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+d0cd32e517f31e14e9bdd104f709a4fb3b80120785740871c62eaeceb03b9d66024ff7411d9899d2564355596783ab3f774bfd4e8273289a92b113185d1c04eb  pantheon-applications-menu-8.0.0.tar.gz
+"

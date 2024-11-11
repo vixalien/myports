@@ -1,0 +1,21 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount /sys directory"
+@user = ( root )
+@depends = ( mount-proc )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-sys mount /sys directory }
+  if -nt {
+
+    execl-cmdline -s { execl-toc -X -m /sys ${Args} }
+
+  }
+  %YELL_ERROR% mount-sys crashed!
+)
+
+[environment]
+Args=!-o nosuid,noexec,nodev -t sysfs -d sys

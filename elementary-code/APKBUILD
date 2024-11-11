@@ -1,0 +1,49 @@
+# Contributor:
+# Maintainer:
+pkgname=elementary-code
+pkgver=7.4.0
+pkgrel=0
+pkgdesc="Code editor designed for elementary OS"
+url="https://github.com/elementary/code"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	editorconfig-dev
+	gettext-dev
+	granite-dev
+	gtk+3.0-dev
+	gtksourceview4-dev
+	gtkspell3-dev
+	libgit2-glib-dev
+	libhandy1-dev
+	libpeas-dev
+	libsoup-dev
+	meson
+	vala
+	vte3-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::https://github.com/elementary/code/archive/refs/tags/$pkgver.tar.gz"
+options="!check"
+
+builddir="$srcdir/code-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+f1b5090301f422eb0106699d97dc0cd70adf3afa44fb0fe1d7a456b2c749e02790868218c90e3e22de45a091c1d50f6d3a143f7cbf93a011310df9eb2490cfcd  elementary-code-7.4.0.tar.gz
+"

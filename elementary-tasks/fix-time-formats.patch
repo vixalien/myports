@@ -1,0 +1,13 @@
+diff --git a/src/TaskModel.vala b/src/TaskModel.vala
+index f7aa339c3..2acf3d49f 100644
+--- a/src/TaskModel.vala
++++ b/src/TaskModel.vala
+@@ -825,7 +825,7 @@ public class Tasks.TaskModel : Object {
+                 return false; // only generate one instance
+             };
+ 
+-            client.generate_instances_for_object_sync (comp, start.as_timet (), end.as_timet (), null, recur_instance_callback);
++            client.generate_instances_for_object_sync (comp, (int64_t) start.as_timet (), (int64_t) end.as_timet (), null, recur_instance_callback);
+         }
+     }
+ 

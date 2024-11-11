@@ -1,0 +1,220 @@
+From 093a91e2dc394f77fa6e1db4c22c4f2908c61d72 Mon Sep 17 00:00:00 2001
+From: BalkanMadman <zurabid2016@gmail.com>
+Date: Thu, 10 Aug 2023 02:05:58 +0300
+Subject: [PATCH] Provide an RC service script to start usbmuxd on OpenRC
+ systems
+
+This commit adds a usbmuxd service script for the OpenRC init system.
+It intends to conform more closely to the way services are started by
+udev. Previously, on non-systemd systems, udev would start the `usbmuxd`
+binary directly. This commits makes udev start `usbmuxd` in a much
+cleaner way, by using the OpenRC service manager.
+
+This adds two new `configure` flags:
+* `--with-openrc`: toggles on or off (default - off) OpenRC service
+  installation and udev activation via that. Conflicts with systemd, so
+  the latter must be disabled explicitly:
+  `--with-openrc --without-systemd`
+* `--with-rcservicedir=DIR`: specifies directory where to install service
+  file. Defaults to `$sysconfdir/init.d` (which is `/etc/init.d`)
+
+Issue: https://github.com/libimobiledevice/usbmuxd/issues/210
+Signed-off-by: BalkanMadman <zurabid2016@gmail.com>
+---
+ Makefile.am              |  4 ++--
+ configure.ac             | 34 ++++++++++++++++++++++++++++++++++
+ openrc/Makefile.am       | 20 ++++++++++++++++++++
+ openrc/usbmuxd.in        | 14 ++++++++++++++
+ udev/39-usbmuxd.rules.in |  4 ++--
+ udev/Makefile.am         |  2 ++
+ 6 files changed, 74 insertions(+), 4 deletions(-)
+ create mode 100644 openrc/Makefile.am
+ create mode 100755 openrc/usbmuxd.in
+
+diff --git a/Makefile.am b/Makefile.am
+index 6da23b66..02a50226 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,6 +1,6 @@
+ AUTOMAKE_OPTIONS = foreign
+ ACLOCAL_AMFLAGS = -I m4
+-SUBDIRS = src $(UDEV_SUB) $(SYSTEMD_SUB) docs
++SUBDIRS = src $(UDEV_SUB) $(SYSTEMD_SUB) $(OPENRC_SUB) docs
+ 
+ EXTRA_DIST = \
+ 	docs \
+@@ -10,4 +10,4 @@ EXTRA_DIST = \
+ 
+ DISTCHECK_CONFIGURE_FLAGS = \
+ 	--with-udevrulesdir=$$dc_install_base/$(udevrulesdir) \
+-	--with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir)
+\ No newline at end of file
++	--with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir)
+diff --git a/configure.ac b/configure.ac
+index c51d53ad..6bbec369 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -72,12 +72,23 @@ if test "x$with_udevrulesdir" = "xauto"; then
+   fi
+ fi
+ 
++AC_ARG_WITH([openrc],
++            [AS_HELP_STRING([--with-openrc],
++            [build with support for OpenRC init system @<:@default=no@:>@])],
++            [],
++            [with_openrc=no])
++
+ AC_ARG_WITH([systemd],
+             [AS_HELP_STRING([--without-systemd],
+             [do not build with systemd support @<:@default=yes@:>@])],
+             [with_systemd=$withval],
+             [with_systemd=yes])
+ 
++if test "x$with_systemd" = xyes -a "x$with_openrc" = xyes; then
++  AC_MSG_ERROR([Both systemd and OpenRC support can't be enabled at the same time])
++fi
++
++
+ AC_ARG_WITH([systemdsystemunitdir],
+             [AS_HELP_STRING([--with-systemdsystemunitdir=DIR],
+             [directory for systemd service files])],
+@@ -87,14 +98,31 @@ AC_ARG_WITH([systemdsystemunitdir],
+ if test "x$with_systemdsystemunitdir" != xno; then
+   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
+ fi
++
++AC_ARG_WITH([rcservicedir],
++            [AS_HELP_STRING([--with-rcservicedir=DIR],
++            [directory for OpenRC service files])],
++            [rcservicedir="$withval"],
++            [rcservicedir="$sysconfdir/init.d"])
++if test "x$with_rcservicedir" != "xno"; then
++  AC_SUBST([rcservicedir], [$rcservicedir])
++fi
++
+ AM_CONDITIONAL(WANT_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != xno -a "x$with_systemd" = "xyes" ])
++AM_CONDITIONAL(WANT_OPENRC, [test "x$with_openrc" = xyes -a "x$with_rcservicedir" != "xno" ])
+ 
+ if test "x$with_systemd" = xyes; then
+   udev_activation_rule="ENV{SYSTEMD_WANTS}=\"usbmuxd.service\""
++  udev_deactivation_rule="RUN+=\"@sbindir@/usbmuxd --exit\""
++elif test "x$with_openrc" = "xyes" -a "x$with_rcservicedir" != "xno"; then
++  udev_activation_rule="RUN+=\"@rcservicedir@/usbmuxd start --quiet\""
++  udev_deactivation_rule="RUN+=\"@rcservicedir@/usbmuxd stop --quiet\""
+ else
+   udev_activation_rule="RUN+=\"@sbindir@/usbmuxd --user usbmux --udev\""
++  udev_deactivation_rule="RUN+=\"@sbindir@/usbmuxd --exit\""
+ fi
+ AC_SUBST(udev_activation_rule)
++AC_SUBST(udev_deactivation_rule)
+ 
+ # Checks for header files.
+ AC_CHECK_HEADERS([stdint.h stdlib.h string.h])
+@@ -117,6 +145,7 @@ AC_CHECK_FUNCS([ppoll clock_gettime localtime_r])
+ # Check for operating system
+ AC_MSG_CHECKING([whether to enable WIN32 build settings])
+ UDEV_SUB=
++OPENRC_SUB=
+ SYSTEMD_SUB=
+ case ${host_os} in
+   *mingw32*|*cygwin*)
+@@ -142,6 +171,9 @@ case ${host_os} in
+     if test "x$with_systemd" != "xyes"; then
+       echo "*** Note: support for systemd activation has been disabled, using udev activation instead ***"
+       activation_method="udev"
++      if test "x$with_openrc" = "xyes"; then
++        OPENRC_SUB=openrc
++      fi
+     else
+       AC_DEFINE(HAVE_SYSTEMD, 1, [Define to enable systemd support])
+       SYSTEMD_SUB=systemd
+@@ -151,6 +183,7 @@ esac
+ AM_CONDITIONAL(WIN32, test x$win32 = xtrue)
+ 
+ AC_SUBST([UDEV_SUB])
++AC_SUBST([OPENRC_SUB])
+ AC_SUBST([SYSTEMD_SUB])
+ 
+ AS_COMPILER_FLAGS(GLOBAL_CFLAGS, "-g -Wall -Wextra -Wmissing-declarations -Wredundant-decls -Wshadow -Wpointer-arith  -Wwrite-strings -Wswitch-default -Wno-unused-parameter")
+@@ -168,6 +201,7 @@ Makefile
+ src/Makefile
+ udev/Makefile
+ systemd/Makefile
++openrc/Makefile
+ docs/Makefile
+ ])
+ AC_OUTPUT
+diff --git a/openrc/Makefile.am b/openrc/Makefile.am
+new file mode 100644
+index 00000000..4b57e933
+--- /dev/null
++++ b/openrc/Makefile.am
+@@ -0,0 +1,20 @@
++if WANT_OPENRC
++edit = \
++    $(SED) -r \
++	-e 's|@sbindir[@]|$(sbindir)|g' \
++	< $< > $@ || rm $@
++
++rcservice_SCRIPTS = usbmuxd
++
++usbmuxd: usbmuxd.in
++	$(edit)
++
++EXTRA_DIST = \
++	usbmuxd.in
++
++MAINTAINERCLEANFILES = \
++	usbmuxd
++
++CLEANFILES = \
++	usbmuxd
++endif
+diff --git a/openrc/usbmuxd.in b/openrc/usbmuxd.in
+new file mode 100755
+index 00000000..aa892467
+--- /dev/null
++++ b/openrc/usbmuxd.in
+@@ -0,0 +1,14 @@
++#!/sbin/openrc-run
++# Copyright 2023-2024 Gentoo Authors
++# Distributed under the terms of the GNU General Public License as published by
++# the Free Software Foundation, either version 2 or version 3
++
++name="USB multiplexing daemon"
++description="Socket daemon for the usbmux protocol used by Apple devices"
++command="@sbindir@/usbmuxd"
++command_args="--user usbmux"
++pidfile="/run/${RC_SVCNAME}.pid"
++
++depend() {
++	keyword -stop
++}
+diff --git a/udev/39-usbmuxd.rules.in b/udev/39-usbmuxd.rules.in
+index ac15593e..0e3aaf1b 100644
+--- a/udev/39-usbmuxd.rules.in
++++ b/udev/39-usbmuxd.rules.in
+@@ -10,7 +10,7 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{PRODUCT}=="5ac/8600/*", ACTION
+ 
+ 
+ # Make sure properties don't get lost when bind action is called
+-SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{PRODUCT}=="5ac/12[9a][0-9a-f]/*|5ac/190[1-5]/*|5ac/8600/*", ACTION=="bind", ENV{USBMUX_SUPPORTED}="1", OWNER="usbmux"
++SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{PRODUCT}=="5ac/12[9a][0-9a-f]/*|5ac/190[1-5]/*|5ac/8600/*", ACTION=="bind", ENV{USBMUX_SUPPORTED}="1", OWNER="usbmux", @udev_activation_rule@
+ 
+ # Exit usbmuxd when the last device is removed
+-SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{PRODUCT}=="5ac/12[9a][0-9a-f]/*|5ac/190[1-5]/*|5ac/8600/*", ACTION=="remove", RUN+="@sbindir@/usbmuxd -x"
++SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{PRODUCT}=="5ac/12[9a][0-9a-f]/*|5ac/190[1-5]/*|5ac/8600/*", ACTION=="remove", @udev_deactivation_rule@
+diff --git a/udev/Makefile.am b/udev/Makefile.am
+index 95f565d4..727986fa 100644
+--- a/udev/Makefile.am
++++ b/udev/Makefile.am
+@@ -1,7 +1,9 @@
+ edit = \
+ 	$(SED) -r \
+ 	-e 's|@udev_activation_rule[@]|$(udev_activation_rule)|g' \
++	-e 's|@udev_deactivation_rule[@]|$(udev_deactivation_rule)|g' \
+ 	-e 's|@sbindir[@]|$(sbindir)|g' \
++	-e 's|@rcservicedir[@]|$(rcservicedir)|g' \
+ 	< $< > $@ || rm $@
+ 
+ udevrules_DATA = \

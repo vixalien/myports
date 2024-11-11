@@ -1,0 +1,22 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Load kernel modules"
+@user = ( root )
+@depends = ( mount-branch )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% modules-kernel load kernel modules }
+  if -nt {
+
+    pipeline -d { kmod static-nodes --format=devname }
+    pipeline { s6-cut -d" " -f1 }
+    forstdin -pd "\n -- mod
+    importas -iu D "" mod mod
+    modprobe $mod
+
+  }
+  %YELL_ERROR% modules-kernel crashed!
+)

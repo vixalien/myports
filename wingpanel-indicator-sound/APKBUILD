@@ -1,0 +1,40 @@
+# Contributor:
+# Maintainer:
+pkgname=wingpanel-indicator-sound
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Wingpanel Sound Indicator"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	granite-dev
+	libcanberra-dev
+	libnotify-dev
+	meson
+	pulseaudio-dev
+	vala
+	wingpanel-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+1e29fe199f9725d7eb7270bfcb98ecc0497d61f1f9dd9f8997b330ad6ec22d3e4a7b6e412537d577c72cf1604b617d57f9306ee441c421d18cd9d9a0d494e5e7  wingpanel-indicator-sound-8.0.0.tar.gz
+"

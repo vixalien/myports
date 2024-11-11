@@ -1,0 +1,8 @@
+#!/sbin/openrc-run
+
+supervisor="supervise-daemon"
+
+description="GNOME Remote Desktop"
+command="/usr/libexec/gnome-remote-desktop"
+command_args="--system"
+

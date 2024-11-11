@@ -1,0 +1,6 @@
+option(
+  'HOSTNAME',
+  type: 'string',
+  value: 'localhost',
+  description: 'hostname of the system'
+)

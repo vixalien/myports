@@ -1,0 +1,42 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-onlineaccounts
+pkgver=8.0.1
+pkgrel=0
+pkgdesc="Switchboard Online Accounts Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="switchboard"
+makedepends="
+	evolution-data-server-dev
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	meson
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+7af066d6a82151280cc578f9572ac7bf3e51a08141a74b13dc7496d4ce4063e85a1e6354348593d4ed332d1c86e9194d4a65e787d10f35023b01cfe10e517622  switchboard-plug-onlineaccounts-8.0.1.tar.gz
+"

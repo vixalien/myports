@@ -1,0 +1,22 @@
+# Contributor:
+# Maintainer:
+pkgname=s6-base
+pkgver=1.0.0
+pkgrel=1
+_commit=cccf8005e354b18122e7e948c0c2170f95482abe
+pkgdesc="Packages, hooks, and scripts to define a basic s6 init system implementation for Alpine Linux"
+url="https://gitea.artixlinux.org/artix/s6-scripts"
+arch="noarch"
+license="GPL"
+depends="s6-contrib s6-linux-init"
+provides="svc-manager init-rc"
+source=""
+options="!check"
+
+builddir="$srcdir/s6-scripts"
+
+package() {
+	## make dummy directory in /usr/share/s6
+	install -d -m 755 "$pkgdir/usr/share/s6"
+	echo hello >"$pkgdir/usr/share/s6/README"
+}

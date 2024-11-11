@@ -1,0 +1,46 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-keyboard
+pkgver=8.0.1
+pkgrel=0
+pkgdesc="Switchboard Keyboard Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="
+	gala
+	switchboard
+"
+makedepends="
+	granite7-dev
+	gtk4.0-dev
+	ibus-dev
+	libadwaita-dev
+	meson
+	switchboard-dev
+	vala
+	xkeyboard-config-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+ebcdcbb2da7ef07d0af0ea0d2e5d3166c8a2888c4ac6668615cfe915372889b7044f132244c0505eb6a741844272585a49876dcadc2c30cb310c4393a80a7e08  switchboard-plug-keyboard-8.0.1.tar.gz
+"

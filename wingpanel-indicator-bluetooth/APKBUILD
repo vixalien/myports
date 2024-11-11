@@ -1,0 +1,38 @@
+# Contributor:
+# Maintainer:
+pkgname=wingpanel-indicator-bluetooth
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Wingpanel Bluetooth Indicator"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	granite-dev
+	libnotify-dev
+	meson
+	vala
+	wingpanel-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+e462e1e0717a81720757745f57fc10860e23a176a189ba49401355520b5de2bee03eca227f7221fbc6abf48449df3448773e5e750b9f58f8f66eb3ff39bbb3cc  wingpanel-indicator-bluetooth-8.0.0.tar.gz
+"

@@ -1,0 +1,44 @@
+# Contributor:
+# Maintainer:
+_pkgname=quick-settings
+pkgname=pantheon-$_pkgname
+pkgver=1.0.0
+pkgrel=0
+pkgdesc="Access frequently used settings and system actions"
+url="https://github.com/elementary/$_pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	granite-dev
+	gtk+3.0-dev
+	libhandy1-dev
+	libportal-dev
+	meson
+	packagekit-dev
+	vala
+	wingpanel-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$_pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+8af82340cd10e53227809c0f2505bbb319ba09aa4b4f8d815d65150ed7ece7b4bd05e412efa13182424ed0d3a62bf559e0b64f3fdcee93f367aded1ab53c2fb6  pantheon-quick-settings-1.0.0.tar.gz
+"

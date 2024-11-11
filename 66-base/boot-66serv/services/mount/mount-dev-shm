@@ -1,0 +1,33 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount /dev/shm directory"
+@user = ( root )
+@depends = ( mount-dev )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-dev mount /dev/shm directory }
+  if -nt {
+
+    execl-cmdline -s { execl-toc -X -m /dev/shm ${Args} }
+
+  }
+  %YELL_ERROR% mount-dev crashed!
+)
+
+[stop]
+@execute=
+(
+  if { %YELL_INFO% mount-shm stops... }
+  if -nt {
+
+    execl-toc -tD -m /dev/shm umount -lR /dev/shm
+
+  }
+  %YELL_ERROR% mount-shm crashed!
+)
+
+[environment]
+Args=!-o mode=1777,nosuid,nodev -t tmpfs -d shm

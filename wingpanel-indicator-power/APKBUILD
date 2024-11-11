@@ -1,0 +1,38 @@
+# Contributor:
+# Maintainer:
+pkgname=wingpanel-indicator-power
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Wingpanel Power Indicator"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	granite-dev
+	meson
+	mutter-dev
+	vala
+	wingpanel-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+7f643b76ceff824a6c21d98baf67843ceec986c8583ffdb1170fd845915afcb9ea6f8ab801c07ee6aa521d917fe73bd6dd2901dfad6476ece2883a18fd133532  wingpanel-indicator-power-8.0.0.tar.gz
+"

@@ -1,0 +1,13 @@
+[main]
+@type = classic
+@version = %VERSION%
+@description = "Launch @I"
+@user = ( root )
+@options = ( !log )
+@depends = ( canopy )
+
+[start]
+@execute = ( execl-cmdline -s { getty ${Args} @I } )
+
+[environment]
+Args=!38400

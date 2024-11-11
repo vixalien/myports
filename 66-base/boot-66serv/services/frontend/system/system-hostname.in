@@ -1,0 +1,21 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Sets the hostname of the machine"
+@user = ( root )
+
+[start]
+@execute = 
+(
+  if { 66-yeller -cdp hostname -1 /dev/console set hostname }
+  if -nt {
+
+    execl-envfile ${ConfFile}
+    s6-hostname ${HOSTNAME}
+
+  }
+  66-yeller -fcdp hostname -1 /dev/console crashed!
+)
+
+[environment]
+ConfFile=!%BOOTCONF%

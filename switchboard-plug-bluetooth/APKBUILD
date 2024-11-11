@@ -1,0 +1,41 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-bluetooth
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Switchboard Bluetooth Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="switchboard"
+makedepends="
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	meson
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+b76004ece7df0f0f80e2a8529ed805a5554a797198639739f70b766ea8563d38f50291f24ac181b951c480fbc7cf18b2399b0d2f62a2b462bfa2a5d8176b6537  switchboard-plug-bluetooth-8.0.0.tar.gz
+"

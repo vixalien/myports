@@ -1,0 +1,39 @@
+# Contributor: Angelo Verlain <hey@vixalien.com>
+# Maintainer: Angelo Verlain <hey@vixalien.com>
+
+pkgname=s6-scripts
+pkgver=20240617
+_commit=cccf8005e354b18122e7e948c0c2170f95482abe
+pkgrel=0
+pkgdesc="A collection of essential s6-rc oneshots and longruns for startup/shutdown"
+url="https://gitea.artixlinux.org/artix/s6-scripts"
+arch="noarch"
+license="GPL".
+depends="cgroup-tools execline linux-pam s6-rc udev"
+subpackages="$pkgname-doc"
+source="$pkgname-$_commit.tar.gz::$url/archive/$_commit.tar.gz"
+options="!check"
+backup="etc/s6/rc.local
+	etc/s6/config/tty1.conf
+	etc/s6/config/tty2.conf
+	etc/s6/config/tty3.conf
+	etc/s6/config/tty4.conf
+	etc/s6/config/tty5.conf
+	etc/s6/config/tty6.conf
+	etc/s6/config/ttyS.conf
+	etc/s6/config/dmesg.conf
+	etc/s6/config/hwclock.conf
+	etc/s6/config/mount-tmpfs.conf
+	etc/s6/config/udevd.conf
+	usr/lib/sysctl.d/50-default.conf
+	"
+
+builddir="$srcdir/$pkgname"
+
+package() {
+	make DESTDIR="$pkgdir" install
+}
+
+sha512sums="
+474d2a6168cec8f3ddd964349726c89d286591244a30e599fa084821e82e72220e6638d696e307dd1591207caf04dbb423a1b5e56795279b79b240baa7ddd8aa  s6-scripts-cccf8005e354b18122e7e948c0c2170f95482abe.tar.gz
+"

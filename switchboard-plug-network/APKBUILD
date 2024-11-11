@@ -1,0 +1,46 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-network
+pkgver=8.0.0
+pkgrel=1
+pkgdesc="Switchboard Network Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="
+	network-manager-applet
+  switchboard
+"
+makedepends="
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	libnma-dev
+	meson
+	networkmanager-dev
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+12a5abcfd4a8ab6e63f351e9c606e9c7c61c5b41ff34847026d6f5b910dbba869b2301b8800b0041610ac67cfc970521f3e3f5fe0b5ab2d4f4d1ece1c97194b4  switchboard-plug-network-8.0.0.tar.gz
+"

@@ -1,0 +1,39 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount cgroups hierarchy"
+@user = ( root )
+@depends = ( mount-dev )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-proc setup cgroups }
+  if -nt {
+
+    execl-toc -m /sys/fs/cgroup -t tmpfs -d cgroup
+    execl-toc -m /sys/fs/cgroup/unified -t cgroup2 -o rw,nosuid,nodev,noexec,relatime,nsdelegate -d cgroup2
+    redirfd -r 0 /proc/cgroups
+    pipeline { s6-tail -n +2 }
+    pipeline { s6-cut -d"\t" -f1 }
+    forstdin -d"\n" -- i
+    importas -iu i i
+    execl-toc -X -m /sys/fs/group/${i} -t cgroup -o rw,nosuid,nodev,noexec,relatime,${i} -d cgroup
+
+  }
+  %YELL_ERROR% mount-proc crashed!
+)
+
+[stop]
+@execute =
+(
+  if { %YELL_INFO% mount-cgroups umount cgroups }
+  if -nt {
+    umount -lR /sys/fs/cgroup
+  }
+  %YELL_ERROR% mount-cgroups crashed!
+
+)
+
+[environment]
+Args=!-o nosuid,noexec,nodev -t proc -d proc

@@ -1,0 +1,42 @@
+# Contributor:
+# Maintainer:
+pkgname=elementary-shortcut-overlay
+pkgver=8.0.1
+pkgrel=0
+pkgdesc="A native, OS-wide shortcut overlay"
+url="https://github.com/elementary/shortcut-overlay"
+arch="all"
+license="GPL-3.0"
+depends="
+	gala
+	switchboard-plug-keyboard
+"
+makedepends="
+	desktop-file-utils
+	granite7-dev
+	gtk4.0-dev
+	meson
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/shortcut-overlay-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+sha512sums="
+793d71d590c33173b72b4cfce8c6c648d0e20fe2107c5a378e81b2986f6a70b6421c3dfe1a8b749409fd86c844c50e1e840eab127f99bbba3bbb63ddcc419511  elementary-shortcut-overlay-8.0.1.tar.gz
+"

@@ -1,0 +1,48 @@
+# Contributor: Rasmus Thomsen <oss@cogitri.dev>
+# Contributor: Natanael Copa <ncopa@alpinelinux.org>
+# Maintainer: Natanael Copa <ncopa@alpinelinux.org>
+pkgname=vala
+pkgver=0.56.17
+pkgrel=0
+pkgdesc="Compiler for the GObject type system"
+url="https://wiki.gnome.org/Projects/Vala"
+arch="all"
+license="LGPL-2.0-or-later"
+subpackages="$pkgname-devhelp $pkgname-dbg $pkgname-doc"
+depends="glib-dev"
+makedepends="libxslt-dev bash flex bison gobject-introspection-dev graphviz-dev"
+checkdepends="dbus-x11"
+source="https://download.gnome.org/sources/vala/${pkgver%.*}/vala-$pkgver.tar.xz
+	0001-posix-Define-_XOPEN_SOURCE-_GNU_SOURCE-for-signal-fu.patch
+	"
+options="!check"
+
+prepare() {
+	default_prepare
+	# 2 failures
+	sed -i "/constants\/member-access/d" \
+		tests/Makefile.in
+}
+
+build() {
+	CFLAGS="$CFLAGS -O2 -flto=auto" \
+	CXXFLAGS="$CXXFLAGS -O2 -flto=auto" \
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr
+	make
+}
+
+check() {
+	make check
+}
+
+package() {
+	make DESTDIR="$pkgdir" install
+}
+
+sha512sums="
+61df98ba6b15d589a1864598a6f69cc3bee9154ba65270fc3a2fb1d0c3a68c32c29b572bcc26d6616d3fa23d53fb41710af3636125507864dd17f47cf27d4723  vala-0.56.17.tar.xz
+5106f2a3a3a4350a0e6be7985ae8dff41a8943bb3752f66d6aaa115dd7f9ceff0e1e22941869a1d02426dafbf52f4211750ad12c134144ba6d5a3f0a8076d866  0001-posix-Define-_XOPEN_SOURCE-_GNU_SOURCE-for-signal-fu.patch
+"

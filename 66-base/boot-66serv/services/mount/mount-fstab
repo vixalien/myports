@@ -1,0 +1,18 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount partitions from /etc/fstab file"
+@user = ( root )
+@depends = ( system-fsck )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-fstab implement fstab directives }
+  if -nt {
+
+    mount -a
+
+  }
+  %YELL_ERROR% mount-fstab crashed!
+)

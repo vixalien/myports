@@ -1,0 +1,17 @@
+diff --git a/src/MainWindow.vala b/src/MainWindow.vala
+index 2e6dc5da..cb963bba 100644
+--- a/src/MainWindow.vala
++++ b/src/MainWindow.vala
+@@ -102,9 +102,11 @@ public class Mail.MainWindow : Hdy.ApplicationWindow {
+         get_action (ACTION_COMPOSE_MESSAGE).set_enabled (false);
+ 
+         foreach (var action in action_accelerators.get_keys ()) {
++            var accels = action_accelerators[action].to_array ();
++            accels += null;
+             ((Gtk.Application) GLib.Application.get_default ()).set_accels_for_action (
+                 ACTION_PREFIX + action,
+-                action_accelerators[action].to_array ()
++                accels
+             );
+         }
+ 

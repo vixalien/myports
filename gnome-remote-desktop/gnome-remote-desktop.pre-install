@@ -1,0 +1,6 @@
+#!/bin/sh
+
+addgroup -S gnome-remote-desktop 2>/dev/null
+adduser -S -D -h /var/lib/gnome-remote-desktop -s /sbin/nologin -G gnome-remote-desktop -g gnome-remote-desktop gnome-remote-desktop 2>/dev/null
+
+exit 0

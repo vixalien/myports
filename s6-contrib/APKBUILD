@@ -1,0 +1,30 @@
+# Contributor: Angelo Verlain <hey@vixalien.com>
+# Maintainer: Angelo Verlain <hey@vixalien.com>
+
+pkgname=s6-contrib
+pkgver=1.0
+_commit=7b2103447ed89aa0661d8800f8d9e061cf8bd63c
+pkgrel=0
+pkgdesc="A collection of s6 convenience scripts"
+url="https://gitea.artixlinux.org/artix/s6-contrib"
+arch="noarch"
+license="GPL"
+depends="s6 s6-scripts"
+makedepends="m4"
+backup="etc/s6/s6-db-reload.conf"
+source="$pkgname-$_commit.tar.gz::$url/archive/$_commit.tar.gz"
+options="!check"
+
+builddir="$srcdir/s6-contrib"
+
+build() {
+	make
+}
+
+package() {
+	make DESTDIR="$pkgdir" install
+}
+
+sha512sums="
+cb0e837b8a6ac7ab9054d8613116175b0820bb4cc2012a052ca1d0ede1cda22488b8224ecb093fd1fd14eb2c81e277c65fdf86290fa6cefd247c7377432fcab3  s6-contrib-7b2103447ed89aa0661d8800f8d9e061cf8bd63c.tar.gz
+"

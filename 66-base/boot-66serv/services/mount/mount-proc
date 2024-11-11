@@ -1,0 +1,20 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount /proc directory"
+@user = ( root )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-proc mount /proc directory }
+  if -nt {
+
+    execl-cmdline -s { execl-toc -X -m /proc ${Args} }
+
+  }
+  %YELL_ERROR% mount-proc crashed!
+)
+
+[environment]
+Args=!-o nosuid,noexec,nodev -t proc -d proc

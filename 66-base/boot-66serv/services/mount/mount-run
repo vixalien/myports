@@ -1,0 +1,20 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount /run directory"
+@user = ( root )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-run mount /run directory }
+  if -nt {
+
+    execl-cmdline -s { execl-toc -X -m /run ${Args} }
+
+  }
+  %YELL_ERROR% mount-run crashed!
+)
+
+[environment]
+Args=!-o mode=0755,nosuid,nodev -t tmpfs -d run

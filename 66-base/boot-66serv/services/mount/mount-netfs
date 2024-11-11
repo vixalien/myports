@@ -1,0 +1,18 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount no-network filesystem"
+@user = ( root )
+@depends = ( mount-rw )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-netfs implement no_netdev directives }
+  if -nt {
+
+    mount -a -t "nosysfs,nonfs,nonfs4,nosmbfs,nocifs" -O no_netdev
+
+  }
+  %YELL_ERROR% mount-netfs crashed!
+)

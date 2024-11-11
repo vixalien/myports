@@ -1,0 +1,45 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-useraccounts
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Switchboard User Accounts Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="switchboard"
+makedepends="
+	accountsservice-dev
+	gnome-desktop-dev
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	libpwquality-dev
+	meson
+	polkit-dev
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+4605e8be0db19bf1bf2a9ad561dc45e9c333a589965977cc0deb22f914260fbc6c9460980022c5da8ad3787562366c381bbf47d89e25bc5141a1d913a79a48d7  switchboard-plug-useraccounts-8.0.0.tar.gz
+"

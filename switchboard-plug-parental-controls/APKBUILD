@@ -1,0 +1,44 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-parental-controls
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Switchboard Screen Time & Limits Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="switchboard"
+makedepends="
+	flatpak-dev
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	malcontent-dev
+	meson
+	polkit-dev
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+23199764a0487843c65155b9027604f953d96d97dbd25b14285bce4fc3276da006428cd7dc1c7b58e4ac45fe04c140081e31dba574166b6e34265f011a10daf5  switchboard-plug-parental-controls-8.0.0.tar.gz
+"

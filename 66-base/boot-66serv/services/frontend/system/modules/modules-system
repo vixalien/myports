@@ -1,0 +1,20 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Load modules from modules-load directories"
+@user = ( root )
+@depends = ( mount-branch )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% modules-system load sysadmin modules }
+  if -nt {
+
+    ${ScriptFile}
+
+  }
+)
+
+[environment]
+ScriptFile=!%MODULESPATH%/modules.sh

@@ -1,0 +1,30 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount swap directory"
+@user = ( root )
+@depends = ( mount-rw )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-swap activate swap }
+  if -nt {
+
+    swapon -a
+
+  }
+  %YELL_ERROR% mount-swap unable to activate the swap!
+)
+
+[stop]
+@execute =
+(
+  if { %YELL_INFO% mount-swap mount /swap deactivate swap }
+  if -nt {
+
+    swapoff -a
+
+  }
+  %YELL_ERROR% mount-swap failed!
+)

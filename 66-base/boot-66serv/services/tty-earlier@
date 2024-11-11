@@ -1,0 +1,14 @@
+[main]
+@type = classic
+@version = %VERSION%
+@description = "Launch earlier @I"
+@user = ( root )
+@options = ( !log )
+@flags = ( earlier )
+
+[start]
+@build = auto
+@execute = ( execl-cmdline -s { getty ${Args} @I } )
+
+[environment]
+Args=!38400

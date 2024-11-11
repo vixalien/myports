@@ -1,0 +1,41 @@
+# Contributor:
+# Maintainer:
+pkgname=wingpanel-indicator-network
+pkgver=7.1.1
+pkgrel=0
+pkgdesc="Wingpanel Network Indicator"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	granite-dev
+	libnotify-dev
+	libnma-dev
+	meson
+	networkmanager-dev
+	polkit-dev
+	vala
+	wingpanel-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+6d1911ae9282e221346a5d8352c336e6eb13814fbb5e4e7a4fc1d899120d5b8f0fac323061bd0e0ebcc4206c5e26fdc2fd937f6e5f3fd784c9ab07cf79c9412b  wingpanel-indicator-network-7.1.1.tar.gz
+"

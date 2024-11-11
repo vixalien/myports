@@ -1,0 +1,40 @@
+# Contributor:
+# Maintainer:
+pkgname=wingpanel
+pkgver=8.0.1
+pkgrel=0
+pkgdesc="Stylish top panel that holds indicators and spawns an application launcher"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	gala-dev
+	granite-dev
+	gtk+3.0-dev
+	meson
+	mutter-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang $pkgname-dev"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+options="!check"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+c79408b2ebac0938ea03e7ef9753f51a106274bd3ccaddd567b3041ed8c81656853e0240e93ff73ab45ab98539817410215d49775fc5d1c1d93aba6155014bb2  wingpanel-8.0.1.tar.gz
+"

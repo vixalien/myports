@@ -1,0 +1,32 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Mount /tmp directory"
+@user = ( root )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-tmp mount /tmp directory }
+  if -nt {
+
+    execl-cmdline -s { execl-toc -X -m /tmp ${Args} }
+
+  }
+  %YELL_ERROR% mount-tmp crashed!
+)
+
+[stop]
+@execute =
+(
+  if { %YELL_INFO% mount-tmp mount /tmp stops... }
+  if -nt {
+
+    execl-toc -tD -m /tmp umount -lR /tmp
+
+  }
+  %YELL_ERROR% mount-tmp crashed!
+)
+
+[environment]
+Args=!-o noatime,nodev,nosuid -t tmpfs -d tmp

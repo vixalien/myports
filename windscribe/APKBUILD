@@ -1,0 +1,56 @@
+# Contributor:
+# Maintainer:
+pkgname=windscribe
+pkgver=2.11.11
+pkgrel=0
+pkgdesc="Windscribe 2.0 desktop client for Linux"
+url="https://github.com/Windscribe/Desktop-App"
+arch="all"
+license="GPL2"
+depends=""
+makedepends="
+	python3
+	bash
+	py3-colorama
+	py3-pyaml
+	py3-requests
+	curl
+	cmake
+	ninja
+	openssl-dev
+	boost-dev
+	qt6-qtbase-dev
+	qt6-qttools-dev
+	"
+install=""
+# subpackages="$pkgname-dev $pkgname-doc"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz"
+options="!check"
+
+builddir="$srcdir/Desktop-App-$pkgver"
+
+build() {
+	cd client
+
+	if [ "$CBUILD" != "$CHOST" ]; then
+		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
+	fi
+	cmake -B build -G Ninja \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=lib \
+		-DCMAKE_BUILD_TYPE=MinSizeRel \
+		-DGETTEXT_MSGINIT_EXECUTABLE=msginit \
+		-DCURA_BINARY_DATA_DIRECTORY=/usr/share/cura \
+		$CMAKE_CROSSOPTS
+	cmake --build build
+
+}
+
+package() {
+	# Replace with proper package command(s)
+	:
+}
+
+sha512sums="
+bb71f2f14f35949ea3657774cc411243f093f2ba3c0393ffafdbedada1494ec49419957f28a9d3a2d5dce10bfe7b1ae15334a9a6675e004d0c8b1b3020150693  windscribe-2.11.11.tar.gz
+"

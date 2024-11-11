@@ -1,0 +1,49 @@
+# Contributor: Angelo Verlain <hey@vixalien.com>
+# Maintainer: Angelo Verlain <hey@vixalien.com>
+pkgname=elementary-tasks
+pkgver=6.3.3
+pkgrel=0
+pkgdesc="Synced tasks and reminders on elementary OS"
+url="https://github.com/elementary/tasks"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+  evolution-data-server-dev
+	geoclue-dev
+	geocode-glib-dev
+	granite-dev
+	gtk+3.0-dev
+	libchamplain-dev
+	libhandy1-dev
+	libportal-dev
+	meson
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="
+	$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz
+	fix-time-formats.patch
+	"
+
+builddir="$srcdir/tasks-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+20d5414630854a81231db1721f3d9c11721aa6f6406ebd3789585be9941dd7b24114488370e89b1824b0fdbe061478ec907f5037f59e7288a8dd98db69b96bc2  elementary-tasks-6.3.3.tar.gz
+28f5e7bab354e7322524cb578914726ee442207a9387319a5901ac6c8f187e634ca20da4cfeefefb0c98f9176966bbba426ce167a414099406bfe7cc536fa30c  fix-time-formats.patch
+"

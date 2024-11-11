@@ -1,0 +1,47 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-security-privacy
+pkgver=8.0.0
+pkgrel=0
+pkgdesc="Switchboard Security & Privacy Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="
+  switchboard
+	ufw
+	zeitgeist
+"
+makedepends="
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	meson
+	polkit-dev
+	switchboard-dev
+	vala
+	zeitgeist-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+0c831196d22898e5d9885108e3ed732cbcd48f54301874d6c9a8fd0f7dcb8e2f8f94d853a05c2834f2d44624d8cfe5c07acbbf2b9b50798136fd352c10dfdee9  switchboard-plug-security-privacy-8.0.0.tar.gz
+"

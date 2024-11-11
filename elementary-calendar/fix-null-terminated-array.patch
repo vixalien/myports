@@ -1,0 +1,15 @@
+diff --git a/src/MainWindow.vala b/src/MainWindow.vala
+index 0672b8f7..0a178555 100644
+--- a/src/MainWindow.vala
++++ b/src/MainWindow.vala
+@@ -53,7 +53,9 @@ public class Maya.MainWindow : Hdy.ApplicationWindow {
+         add_action_entries (ACTION_ENTRIES, this);
+ 
+         foreach (var action in action_accelerators.get_keys ()) {
+-            ((Gtk.Application) GLib.Application.get_default ()).set_accels_for_action (ACTION_PREFIX + action, action_accelerators[action].to_array ());
++            var accels = action_accelerators[action].to_array ();
++            accels += null;
++            ((Gtk.Application) GLib.Application.get_default ()).set_accels_for_action (ACTION_PREFIX + action, accels);
+         }
+ 
+         weak Gtk.IconTheme default_theme = Gtk.IconTheme.get_default ();

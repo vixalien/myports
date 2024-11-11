@@ -1,0 +1,49 @@
+# Contributor:
+# Maintainer:
+_pkgname=mail
+pkgname=elementary-$_pkgname
+pkgver=8.0.0
+pkgrel=2
+pkgdesc="Mail app designed for elementary OS"
+url="https://github.com/elementary/$_pkgname"
+arch="all"
+license="GPL-3.0"
+depends=""
+makedepends="
+	evolution-data-server-dev
+	folks-dev
+	granite-dev
+	gtk+3.0-dev
+	libhandy1-dev
+	libportal-dev
+	meson
+	vala
+	webkit2gtk-4.1-dev
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="
+	$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz
+	fix-null-terminated-array.patch
+	"
+
+builddir="$srcdir/$_pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+57413052b17384549ba1ea2da0d408b7ebcbf0721bef7b6646daeabcd60dee2789003d9967404694392dc8ae1cea812e868677176df70470076e659edd2b16ae  elementary-mail-8.0.0.tar.gz
+5aac59c42884d3abbe295c3b502f97dcc86c14152b151b0980110b5881898061c11cb81175d45967682272e9552e9894512ec6a1e99963b588253c25bf9fafeb  fix-null-terminated-array.patch
+"

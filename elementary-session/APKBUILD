@@ -1,0 +1,54 @@
+# Contributor:
+# Maintainer:
+_pkgname=session-settings
+pkgname=elementary-session
+pkgver=8.0.1
+pkgrel=0
+pkgdesc="Session settings for elementary OS"
+url="https://github.com/elementary/$_pkgname"
+arch="noarch"
+license="GPL-3.0"
+depends="
+	dconf
+	gala
+	gnome-keyring
+	gnome-settings-daemon
+	onboard
+	orca
+	pantheon-dock
+	pantheon-applications-menu
+	touchegg
+	wingpanel
+	xdg-user-dirs
+"
+makedepends="
+	desktop-file-utils
+	gnome-settings-daemon-dev
+	meson
+	"
+checkdepends=""
+install=""
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$_pkgname-$pkgver"
+
+build() {
+	abuild-meson \
+		-Dfallback-session=gnome \
+		-Dsystemd=false \
+		-Dwayland=true \
+	. output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+119bb339b14fd52cbdc56ca001536dafa7ba814caa167b1bda7a803f0ccf4ca5db76acf22220852e44b0680b8f89ac3258663fa0ad9c59c39fd77fd5bbd93c1a  elementary-session-8.0.1.tar.gz
+"

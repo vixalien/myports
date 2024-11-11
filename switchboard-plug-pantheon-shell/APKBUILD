@@ -1,0 +1,44 @@
+# Contributor:
+# Maintainer:
+pkgname=switchboard-plug-pantheon-shell
+pkgver=8.1.0
+pkgrel=0
+pkgdesc="Switchboard Desktop Plug"
+url="https://github.com/elementary/$pkgname"
+arch="all"
+license="GPL-3.0"
+depends="
+	switchboard
+"
+makedepends="
+	gexiv2-dev
+	granite7-dev
+	gtk4.0-dev
+	libadwaita-dev
+	meson
+	switchboard-dev
+	vala
+	"
+checkdepends=""
+install=""
+subpackages="$pkgname-lang"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/$pkgver.tar.gz"
+
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	abuild-meson . output
+	meson compile -C output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+d6717282a3a7b7e73ab13c00089f486c29e5e5ca6c0132f810f6888e7a293048f15811cc6be622ee3be9f02f0bc0687fbc1dfd64a8c82e710c49a33517e45288  switchboard-plug-pantheon-shell-8.1.0.tar.gz
+"

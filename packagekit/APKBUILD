@@ -1,0 +1,76 @@
+# Contributor:
+# Maintainer:
+pkgname=packagekit
+pkgver=1.3.0
+pkgrel=2
+pkgdesc="A system designed to make installation and updates of packages easier"
+url="https://www.freedesktop.org/software/PackageKit/"
+arch="all"
+license="GPL-2.0-or-later"
+depends=""
+makedepends="
+	bash-completion-dev
+	glib-dev
+	gobject-introspection-dev
+  meson
+	polkit-dev
+	vala
+	tree
+"
+checkdepends=""
+install=""
+subpackages="
+	$pkgname-lang
+	$pkgname-dev
+	$pkgname-bash-completion
+	$pkgname-doc
+	$pkgname-glib
+	py3-packagekit-pyc
+	py3-packagekit:py3_packagekit
+"
+source="https://www.freedesktop.org/software/PackageKit/releases/PackageKit-$pkgver.tar.xz"
+options="!check"
+
+builddir="$srcdir/PackageKit-$pkgver"
+
+build() {
+	abuild-meson \
+		-Dgstreamer_plugin=false \
+		-Dgtk_module=false \
+		-Dlocal_checkout=true \
+		-Doffline_update=false \
+		-Dsystemd=false \
+	. output
+	meson compile -C output
+	ls output
+}
+
+check() {
+	meson test --no-rebuild --print-errorlogs -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+	echo packaging main
+	tree $pkgdir
+}
+
+glib() {
+	pkgdesc="GLib library for accessing PackageKit"
+	depends=""
+
+	amove usr/lib/libpackagekit-glib2.so
+	amove usr/lib/libpackagekit-glib2.so*
+	amove usr/lib/packagekit-backend
+	amove usr/lib/girepository*
+}
+
+py3_packagekit() {
+	pkgdesc="$pkgname (Python interface)"
+
+	amove usr/lib/python3*
+}
+
+sha512sums="
+f1a9f78d483285718443ff34bc9ac7cb1b8828f12e0a642ad5ad04737d91f24ea756ac1e0a6d2b8b7a7d9daf0dc264d64766d2dad0bf14830ba666fb1c3693a7  PackageKit-1.3.0.tar.xz
+"

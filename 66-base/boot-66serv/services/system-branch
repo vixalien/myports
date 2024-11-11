@@ -1,0 +1,29 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Start system services"
+@user = ( root )
+@depends = (
+  mount-branch
+  system-hwclock
+  modules-kernel
+  system-random
+  modules-system
+  system-sysctl
+  udevd
+  udevadm
+  system-fontnkey
+  devices-branch
+  system-fsck
+  mount-fstab
+)
+
+[start]
+@execute = (
+  %YELL_INFO% system-branch completed
+)
+
+[start]
+@execute = (
+  %YELL_INFO% system-branch completed
+)

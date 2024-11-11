@@ -1,0 +1,21 @@
+[main]
+@type = oneshot
+@version = %VERSION%
+@description = "Remount rw / directory"
+@user = ( root )
+@depends = ( system-branch )
+
+[start]
+@execute =
+(
+  if { %YELL_INFO% mount-rw remount root directory as rw }
+  if -nt {
+
+    execl-cmdline -s { s6-mount ${Args} }
+
+  }
+  %YELL_ERROR% mount-rw crashed!
+)
+
+[environment]
+Args=!-o remount,rw / /
