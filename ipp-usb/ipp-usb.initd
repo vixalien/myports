@@ -1,0 +1,11 @@
+#!/sbin/openrc-run
+
+name="ipp-usb"
+description="Daemon for IPP over USB printer support"
+command="/sbin/ipp-usb"
+command_args="udev"
+
+depend() {
+    after cups avahi-daemon
+    want avahi-daemon
+}

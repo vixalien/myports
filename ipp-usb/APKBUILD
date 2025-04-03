@@ -1,0 +1,36 @@
+# Contributor: Angelo Verlain <hey@vixalien.com>
+maintainer="Angelo Verlain <hey@vixalien.com>"
+pkgname=ipp-usb
+pkgver=0.9.28
+pkgrel=0
+pkgdesc="allows using the IPP protocol, normally designed for network printers, to be used with USB printers as well"
+url="https://github.com/OpenPrinting/ipp-usb"
+arch="all"
+license="BSD-2-Clause"
+depends=""
+makedepends="avahi-dev go libusb-dev"
+checkdepends=""
+install=""
+subpackages="$pkgname-doc"
+source="$pkgname-$pkgver.tar.gz::https://github.com/OpenPrinting/ipp-usb/archive/refs/tags/$pkgver.tar.gz"
+options="net"
+# builddir="$srcdir/"
+
+build() {
+	# ./configure \
+	# 	--enable-static \
+	# 	--prefix=/usr
+	make
+}
+
+# check() {
+# 	go test
+# }
+
+package() {
+	make DESTDIR="$pkgdir" install
+}
+
+sha512sums="
+86ecd4a22421c2e8388c5e727e424b2ab6e50e2d6aa884bab0d7380bd7dd08f211ebe4abda87c4f64cbe3f261b7bb33ee26140b34c0c167de03b4aa7046332e9  ipp-usb-0.9.28.tar.gz
+"
