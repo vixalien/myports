@@ -1,0 +1,17 @@
+[Main]
+Type = classic
+Description = "Applies a keymap for the consoles."
+Provides = ( keymaps )
+Depends = ( localmount )
+
+[Start]
+Execute = (
+  importas -S KEYMAP
+  if -X { eltest -n $KEYMAP }
+  pipeline { zcat $KEYMAP }
+  loadkmap
+)
+
+[Environment]
+# Absolut path to the keymap which should be loaded using loadkmap.
+#KEYMAP="/usr/share/keymaps/xkb/us.map.gz"
