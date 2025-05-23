@@ -1,0 +1,14 @@
+[Main]
+Type = classic
+Description = "busybox crond"
+Depends = ( localmount logger )
+
+[Start]
+Execute = (
+  importas -S CRON_OPTS
+  /usr/sbin/crond ${CRON_OPTS} -f
+)
+
+[Environment]
+# enter the cron options
+CRON_OPTS="-c /etc/crontabs"

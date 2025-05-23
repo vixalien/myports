@@ -1,5 +1,4 @@
-# not complete
-[main]
+[Main]
 Type = classic
 Version = 0.0.1
 Description = "busybox acpid"
@@ -16,5 +15,5 @@ Execute = (
   echo ${ACPID_OPTS} -f
 )
 
-[environment]
+[Environment]
 ACPID_OPTS=
