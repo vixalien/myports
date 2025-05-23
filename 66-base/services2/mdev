@@ -1,0 +1,37 @@
+[Main]
+Type = classic
+Description = "the mdev device manager"
+Provides = ( dev )
+Depends = ( sysfs dev-mount )
+OptDepends = ( checkfs fsck )
+
+[Start]
+Execute = (
+  # start service
+  foreground {
+    foreground { 66-yeller "Starting busybox mdev" }
+    foreground { mkdir -p /dev }
+    redirfd -w 1 /proc/sys/kernel/hotplug
+    echo /sbin/mdev
+  }
+
+  # start coldplug
+  foreground { 66-yeller "Scanning hardware for mdev" }
+  # mdev -s will not create /dev/usb[1-9] devices with recent kernels
+  # so we manually trigger events for usb
+  foreground {
+    forbacktickx -E i
+    { find /sys/devices -name usb[0-9]* }
+    if { eltest -e $i/uevent }
+    redirfd -w 1 $i/uevent
+    echo add $i
+  }
+  # trigger the rest of the coldplug
+  mdev -s
+)
+
+[Stop]
+Execute = (
+  redirfd -w 1 /proc/sys/kernel/hotplug
+  echo
+)
