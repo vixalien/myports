@@ -1,0 +1,14 @@
+[Main]
+Type = classic
+Description = "Sets the hostname of the machine"
+
+[Start]
+Execute = (
+  importas -S -D localhost hostname
+  backtick -E opts {
+    ifelse -X { eltest -s /etc/hostnames }
+    { echo -F /etc/hostname }
+    echo $hostname
+  }
+  hostname $opts
+)
