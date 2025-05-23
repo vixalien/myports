@@ -1,0 +1,20 @@
+# not complete
+[main]
+Type = classic
+Version = 0.0.1
+Description = "busybox acpid"
+Depends = ( dev localmount )
+OptDepends = ( hwdrivers modules )
+
+[Start]
+Execute = (
+  importas -S ACPID_OPTS
+  umask 027
+  s6-envuidgid -g wheel
+  importas -S GID
+  s6-applyuidgid -g $GID
+  echo ${ACPID_OPTS} -f
+)
+
+[environment]
+ACPID_OPTS=
