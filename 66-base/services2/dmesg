@@ -1,0 +1,16 @@
+[Main]
+Type = classic
+Description = "Set the dmesg level for a cleaner boot"
+OptDepends = ( dev modules )
+
+[Start]
+Execute = (
+  importas -S dmesg_level
+  if -X { eltest -n $dmesg_level }
+  dmesg -n $dmesg_level
+)
+
+[Environment]
+# Sets the level at which logging of messages is done to the
+# console.  See dmesg(1) for more info.
+dmesg_level="1"
