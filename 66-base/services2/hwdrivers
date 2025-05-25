@@ -1,0 +1,32 @@
+[Main]
+Type = classic
+Description = "Load hardware drivers"
+Depends = ( sysfs dev )
+OptDepends = ( modloop )
+RequiredBy = ( checkfs fsck )
+
+[Start]
+Execute = (
+  backtick cmdline { cat /proc/cmdline }
+  foreground {
+    if { eltest cmdline =~ "noautodetect" }
+    foreground { 66-yeller -w -- "Autodetection of hardware disabled from boot cmdline" }
+    exit 0
+  }
+
+  foreground {
+    # we run it twice so we detect all devices
+    forx _run { 1 2 }
+    pipeline {
+      redirfd -w 2 /dev/null
+      find /sys -name modalias -type f -print0
+    }
+    pipeline { xargs -0 sort -u }
+    redirfd -w 2 /dev/null
+    xargs modprobe -b -a
+  }
+
+	# check if framebuffer drivers got pulled in
+  if { eltest -e /dev/fb0 -a -n -e /sys/module/fbcon }
+  modprobe -b -q fbcon
+)
