@@ -1,0 +1,23 @@
+[Main]
+Type = classic
+Description = "Swap"
+OptDepends = ( clock root )
+RequiredBy = ( localmount )
+
+[Start]
+Execute = (
+  backtick -E uname { uname }
+  redirfd -w 1 /dev/null
+  ifthenelse { eltest ${uname} =~ "^NetBSD|OpenBSD$" }
+  { swapctl -A -t noblk }
+  { swapon -a }
+)
+
+[Stop]
+Execute = (
+backtick -E uname { uname }
+  redirfd -w 1 /dev/null
+  ifthenelse { eltest ${uname} =~ "^NetBSD|OpenBSD$" }
+  { swapctl -U -t noblk }
+  { swapoff -a }
+)
