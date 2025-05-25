@@ -1,0 +1,18 @@
+[Main]
+Type = classic
+Description = "Message logging system"
+Depends = ( clock hostname localmount )
+Provides = ( logger )
+
+[Start]
+Execute = (
+  importas -S SYSLOGD_OPTS
+  umask 027
+  s6-envuidgid -g wheel
+  importas -S GID
+  s6-applyuidgid -g $GID
+  /sbin/syslogd ${SYSLOGD_OPTS} -n
+)
+
+[Environment]
+SYSLOGD_OPTS="-t"
