@@ -1,9 +1,9 @@
 # Contributor: Rasmus Thomsen <oss@cogitri.dev>
 # Maintainer: Rasmus Thomsen <oss@cogitri.dev>
 pkgname=apk-polkit-rs
-pkgver=2.1.1
+pkgver=3.0.0
 #_gitlabsha=d52c3da65fe202a9e97c3d228af952c6
-_commit=a465365903ed97b1ed546b82236450054a9c22fd
+_commit=60571257bf147a7e3eda530f1e720fc52d407eec
 # Revert once we can use releases again!
 options="net !check"
 pkgrel=6
@@ -12,13 +12,13 @@ url="https://gitlab.alpinelinux.org/Cogitri/apk-polkit-rs"
 arch="all"
 license="GPL-3.0-or-later"
 depends="polkit alpine-appstream-downloader"
-makedepends="meson cargo polkit-dev glib-dev clang-dev apk-tools-dev"
+makedepends="meson cargo polkit-dev glib-dev clang-dev apk-tools3-dev"
 checkdepends="appstream bash dbus py3-dbusmock"
-subpackages="$pkgname-dev $pkgname-dbg $pkgname-lang $pkgname-openrc"
+subpackages="$pkgname-dev $pkgname-dbg $pkgname-openrc"
 install="$pkgname.post-install $pkgname.post-upgrade"
 source="
   $pkgname-$_commit.tar.gz::https://gitlab.alpinelinux.org/Cogitri/apk-polkit-rs/-/archive/$_commit.tar.gz
-  0001-tests-fix.patch
+  0001-include-openssl-crypto.patch
   "
 builddir="$srcdir/$pkgname-$_commit"
 
@@ -43,6 +43,6 @@ package() {
 	DESTDIR="$pkgdir" meson install --no-rebuild -C output
 }
 sha512sums="
-601328c9781d56385b2727e76c8961342f9f01314c5783fd8fc648199a6bd7c328961a7464125b11f54c0ae1d30dd4df475dd4f5d1c37e6ed1fdabdfb3486fcb  apk-polkit-rs-a465365903ed97b1ed546b82236450054a9c22fd.tar.gz
-80a5fa3dd46d93288599ab13565cd8975b330e19dfebb5e5d8a6fa7dfb360a6bd426a9bdd7a414eb29b58334f086c61dd710f8bacab579bd8324badb0e70672a  0001-tests-fix.patch
+14490324225dad62f3f6ccc50f5c6f457bbe63f144aefcb3205264cf2bfd956b911b9040926baec266695b390ae58d423a8dbfdceadecd7c4a0cf20f27aaca74  apk-polkit-rs-60571257bf147a7e3eda530f1e720fc52d407eec.tar.gz
+55f40af3d0d478b9d7a8b0e47458fd8338179ca5d2d758300baef6d154ed547b4d389f8c72b8cc3813086d25536dd2a716ff8b97cdf5e5111e70170ef3f6134c  0001-include-openssl-crypto.patch
 "
